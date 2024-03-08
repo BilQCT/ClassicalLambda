@@ -9,7 +9,6 @@ using LinearAlgebra
 
 # Rank functions:
 
-
 # input: x (vector), inequalities (array)
 # output: int array of index values
 function tight_inequalities(x,inequalities)
@@ -18,6 +17,8 @@ function tight_inequalities(x,inequalities)
     b = A*x;
     return findall(y->y==0,b)
 end
+
+######################################
 
 using LinearAlgebra
 
@@ -32,6 +33,8 @@ function rank_of_point(tight_array,inequalities)
     end
 end
 
+######################################
+
 # input: Vector: inequality (dx1)
 # input: Matrix: points (n x d)
 # output: vector of indices such that R[i,:]*h = 0.
@@ -40,6 +43,8 @@ function tight_at_inequality(h,R)
     Rh = R*h;
     return findall(x->x == 0,Rh)
 end
+
+######################################
 
 # input: vector: p1, p2
 # input: matrix: A
@@ -58,6 +63,8 @@ function violated_inequality(v,A)
     return findall(x->x < 0,Av)
 end
 
+######################################
+
 # input: vector in R(d+1); matrix of dimension m x (d+1)
 function vertices_violating_facet(h,R)
     h = Vector(h); R = Array(R);
@@ -65,6 +72,8 @@ function vertices_violating_facet(h,R)
     v_idx = findall(x->x<0,Rh); V = R[v_idx,:];
     return v_idx, V
 end
+
+######################################
 
 # input: Vector: h: facet (1xd),
 # input: Vector: v_minus: violating vector (d x 1)
@@ -92,55 +101,6 @@ function new_vertex(v_minus,v_plus,h)
     end
 end
 
-# change polymake to Julia array of arrays, which is easier for searching:
-function polymake_to_array(P,T)
-    A = [];
-    for i in 1:size(P)[1]
-        r = P[i,:];
-        r_array = Vector{T}([k for k in r]);
-        push!(A,r_array);
-    end
-    return A
-end
-
-
-function array_to_matrix(A,T)
-    m = length(A); d = length(A[1]);
-    M = Matrix{T}(undef,0,d);
-    for i in 1:m
-        r = transpose(A[i]);
-        M = vcat(M,r);
-    end
-    return M
-end
-
-# matching orbits of P (current polytope) with orbits of Q (target polytope):
-function matching_orbits(P, Q, order = [])
-    # determine representative vertices of P in terms of orbits of Q:
-    P_vertices = polymake_to_array(representative_vertices(P));
-    # all vertices of Q:
-    Q_vertices = polymake_to_array(Q.VERTICES);
-    # sort all vertices of Q into orbits:
-    if isempty(order) == true
-        Q_orbits = vertex_orbit(Q);
-    else
-        Q_orbits = vertex_orbit(Q)[order];
-    end
-    # put matching vertices into array:
-    match_array = []; vertices_array = [[] for i in 1:length(Q_orbits)];
-    for i in 1:size(P_vertices)[1]
-        v = P_vertices[i]; matches = findall(y->y==v,Q_vertices);
-        if isempty(matches) == false
-            match_idx = matches[1];
-            for j in 1:length(Q_orbits)
-                type = findall(y->y==match_idx,Q_orbits[j]);
-                if length(type) > 0; push!(match_array,j), push!(vertices_array[j],i)  end;
-            end
-        end
-    end
-    return [sort(collect(Set(match_array))),vertices_array]
-end
-
 
 ####################################################################################
 ####################################################################################
@@ -166,6 +126,8 @@ function lift_mp1_local(v,A,S,s)
     return pm.polytope.Polytope(INEQUALITIES = A_loc[:,x_perp])
 end
 
+######################################
+
 # input: nonlocal point x, polytope P with vertices v
 # output: polytope tilde_P as convex hull of vertices: tilde_v = (v,x).
 function append_projection(x,P)
@@ -176,6 +138,8 @@ function append_projection(x,P)
     return hcat(R,R_prime)
 end
 
+######################################
+
 # input: point x to be lifted
 # output: Polytope of feasible lifts
 function lift_mp1(v,A,S,s)
@@ -185,194 +149,33 @@ function lift_mp1(v,A,S,s)
 end
 
 
+####################################################################################
+####################################################################################
+####################################################################################
 
 
-# recursive loop to construct all dit strings:
-function generate_dit_strings(d,N,n,s)
-    if n < N
-        Zd = [(i-1) for i in 1:d] ; dit_strings = [];
-        for i in 1:length(s)
-            for x in Zd
-                #println(i)
-                push!(dit_strings,push!(copy(s[i]),x));
-            end
-        end
-        s = dit_strings; n = n+1;
-        generate_dit_strings(d,N,n,s)
-    else
-        return s
+# Data-type conversions:
+
+
+# change polymake to Julia array of arrays, which is easier for searching:
+function polymake_to_array(P,T)
+    A = [];
+    for i in 1:size(P)[1]
+        r = P[i,:];
+        r_array = Vector{T}([k for k in r]);
+        push!(A,r_array);
     end
+    return A
 end
 
+######################################
 
-
-# input: outcomes (d) and number of generators (N) (N=dim(simplex))
-function all_dit_strings(d,N)
-    s = [[i-1] for i in 1:d]; n = 1;
-    return generate_dit_strings(d,N,n,s)
-end
-
-
-
-
-####################################################################################
-####################################################################################
-####################################################################################
-
-# Latex functions
-
-function vec_to_str(v)
-    strg_array = [];
-    for i in 1:length(v)
-        strg = string(v[i])
-        if length(strg) == 5
-            strg = strg[1:2]*strg[(end-1):end]
-        else
-            strg = strg[1]*strg[(end-1):end]
-        end
-        push!(strg_array,strg);
-    end
-    return strg_array
-end
-
-function classical_string(idx,typ)
-    stringg = "\\noindent \n 
-    \\textbf{Classical vertex of \$\\mathbf{\\Lambda_2}\$: \\# \$\\mathbf{"*string(idx)*"}\$, Type \$\\mathbf{"*string(typ)*"}\$}"
-    return stringg
-end
-
-function nonclassical_string(idx,typ)
-    stringg = "\\noindent \n 
-    \\textbf{Non-classical vertex of \$\\mathbf{\\Lambda_2}\$: \\# \$\\mathbf{"*string(idx)*"}\$, Type \$\\mathbf{"*string(typ)*"}\$}"
-    return stringg
-end
-
-# Objective: create tex code for a table of Pauli coefficients for vertex v:
-# INPUT: List of Pauli coefficients:
-# OUTPUT: readable stringing/latex code:
-
-function h_tab(v)
-    stringg = "\$\$\\begin{array}{cccccccccccccccc} \n
-    II & XI & YI & ZI & IX & IY & IZ & XX & XY & XZ & YX & YY & YZ & ZX & ZY & ZZ  \\\\ \n
-    "*v[1]*" & "*v[2]*" & "*v[3]*" & "*v[4]*" & "*v[5]*" & "*v[6]*" & \n
-    "*v[7]*" & "*v[8]*" & "*v[9]*" & "*v[10]*" & "*v[11]*" &
-    "*v[12]*" & "*v[13]*" & "*v[14]*" & "*v[15]*" & "*v[16]*"\n
-    "*"\\end{array}\$\$\n"
-    return stringg
-
-end
-
-
-# OBJ: create stringing of probability table for tex
-# INPUT: list of probabilities:
-# OUTPUT: stringing for latex. 
-
-function pl_tab(p)
-    stringg = "\\begin{adjustbox}{width=\\columnwidth,center}
-    \\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-    \\hline
-    s \$\\backslash\$ I   & XI,IX & XI,IY & XI,IZ & YI,IX & YI,IY & YI,IZ & ZI,IX & ZI,IY & ZI,IZ & XY,YX & YZ,ZY & ZX,XZ & XY,ZX & YX,XZ & ZZ,YY \\\\ \\hline \n
-    00 & "*p[1]*" & "*p[5]*" & "*p[9]*" & "*p[13]*" & "*p[17]*" & "*p[21]*" & "*p[25]*" & "*p[29]*" & "*p[33]*" & "*p[37]*" & "*p[41]*" & "*p[45]*" & "*p[49]*" & "*p[53]*" & "*p[57] *"\\\\ \\hline \n\
-    01 & "*p[2]*" & "*p[6]*" & "*p[10]*" & "*p[14]*" & "*p[18]*" & "*p[22]*" & "*p[26]*" & "*p[30]*" & "*p[34]*" & "*p[38]*" & "*p[42]*" & "*p[46]*" & "*p[50]*" & "*p[54]*" & "*p[58] *"\\\\ \\hline    \n\
-    10 & "*p[3]*" & "*p[7]*" & "*p[11]*" & "*p[15]*" & "*p[19]*" & "*p[23]*" & "*p[27]*" & "*p[31]*" & "*p[35]*" & "*p[39]*" & "*p[43]*" & "*p[47]*" & "*p[51]*" & "*p[55]*" & "*p[59] *"\\\\ \\hline     \n\
-    11 & "*p[4]*" & "*p[8]*" & "*p[12]*" & "*p[16]*" & "*p[20]*" & "*p[24]*" & "*p[28]*" & "*p[32]*" & "*p[36]*" & "*p[40]*" & "*p[44]*" & "*p[48]*" & "*p[52]*" & "*p[56]*" & "*p[60] *"\\\\ \\hline    \n\
-    \\end{tabular}
-    \\end{adjustbox}"
-    return stringg
-end
-
-# nonlocal vertices:
-# Objective: create tex code for a table of Pauli coefficients for vertex v:
-# INPUT: List of Pauli coefficients:
-# OUTPUT: readable stringing/latex code:
-
-function nl_h_tab(v)
-    stringg = "\$\$\\begin{array}{cccccccccccccccc} \n
-    II & XX & XY & XZ & YX & YY & YZ & ZX & ZY & ZZ  \\\\ \n
-    "*v[1]*" & "*v[2]*" & "*v[3]*" & "*v[4]*" & "*v[5]*" & "*v[6]*" & \n
-    "*v[7]*" & "*v[8]*" & "*v[9]*" & "*v[10]*"\\end{array}\$\$\n"
-    return stringg
-
-end
-
-
-# OBJ: create stringing of probability table for tex
-# INPUT: list of probabilities:
-# OUTPUT: stringing for latex. 
-
-function nl_p_tab(p)
-    stringg = "\\begin{adjustbox}{width=0.85\\columnwidth,center}
-    \\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-    \\hline
-    s \$\\backslash\$ I & XY,YX & YZ,ZY & ZX,XZ & XY,ZX & YX,XZ & ZZ,YY \\\\ \\hline \n
-    00 & "*p[1]*" & "*p[5]*" & "*p[9]*" & "*p[13]*" & "*p[17]*" & "*p[21]*"\\\\ \\hline \n\
-    01 & "*p[2]*" & "*p[6]*" & "*p[10]*" & "*p[14]*" & "*p[18]*" & "*p[22]*"\\\\ \\hline    \n\
-    10 & "*p[3]*" & "*p[7]*" & "*p[11]*" & "*p[15]*" & "*p[19]*" & "*p[23]*"\\\\ \\hline     \n\
-    11 & "*p[4]*" & "*p[8]*" & "*p[12]*" & "*p[16]*" & "*p[20]*" & "*p[24]*"\\\\ \\hline    \n\
-    \\end{tabular}
-    \\end{adjustbox}"
-    return stringg
-end
-
-function f_string(v)
-    stringg = "\n\
-    \\noindent
-    \$\\mathbf{\\# "*string(v)*"}\$: \n
-    \\vskip .25 cm \n
-    "
-    return stringg
-end
-
-function type_string(v,typ)
-    stringg = "\n
-    \\noindent
-    \$\\mathbf{\\# "*string(v)*" :}\$ \\textbf{Subtype "*string(typ)*"}: \n
-    \\vskip .25 cm \n
-    "
-    return stringg
-end
-
-function skip_string(len)
-    stringg = """\n\
-    \\vskip """*string(len)*""" cm \n\
-    """
-    return stringg
-end
-
-function section(v)
-    stringg = """\n\
-    \\noindent \n\
-    \\section{\\textbf{Neighbors of Canonical Vertex: Type """*string(v)*""":}}\\label{"""*string(v*1)*"""}\n\
-    """
-    return stringg
-end
-
-function section_sub(v,s)
-    stringg = """\n\
-    \\noindent \n\
-    \\section{\\textbf{Neighbors of Canonical Vertex: Type """*string(v)*""": Subtype """*string(s)*\
-    """}}\\label{"""*string(v*1)*"""}\n\
-    """
-    return stringg
-end
-
-function sec_stringg(sec_string, lab_string)
-    stringg = """\n\
-    \\noindent \n\
-    \\section{\\textbf{"""*string(sec_string)*""":}}\\label{"""*string(lab_string)*"""}\n\
-    """
-    return stringg
-end
-
-function latex_matrix(A)
-    m = size(A)[1]; n = size(A)[2]; s = "";
+function array_to_matrix(A,T)
+    m = length(A); d = length(A[1]);
+    M = Matrix{T}(undef,0,d);
     for i in 1:m
-        for j in 1:n
-            if j < n; s = s*str_func(A[i,j])*" & ";
-            else; s = s*str_func(A[i,j]); end;
-        end
-        if i < m; s = s*" \\\\ \n ";
-        else; s = s*" \n "; end
+        r = transpose(A[i]);
+        M = vcat(M,r);
     end
-    return print(s)
+    return M
 end
