@@ -1,0 +1,4 @@
+name = "env"
+uuid = "c2050773-084b-4941-afd9-f4f0a5387077"
+authors = ["Selman Ipek <107721461+selmanipek@users.noreply.github.com>"]
+version = "0.1.0"
