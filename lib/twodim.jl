@@ -25,7 +25,9 @@ function nerve_face_map(s,d)
     """
     Given an n-tuple of dit-strings, calculate the faces, i.e. the 
     (n-1)-dit-strings associated to the n-1 faces of the simplex.
-    These correspond to 
+    Given a joint outcome, or tuple (a,b), this assigns an outcome to
+    each of the Pauli measurements that respects the fact that the Paulis
+    either multiply to +I or -I.
     
     Parameters:
         - s: Array{Int}: dit-string
@@ -69,6 +71,8 @@ end
 function edge_outcome_assignments(ab,T=[])
     """
     Compute the outcome assignments for a two-bit string based on given twisting parameters.
+    E.g., for Paulis A,B,AB, the tuple (a,b) assigns a to A, b to B, and a+b mod 2 to AB
+    if the operators multiply to I and a+b+1 mod 2 to AB if they multiply to -I.
     
     Parameters:
         - ab: Array{Int}: Two-bit string (array of 0/1)
