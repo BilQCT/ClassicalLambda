@@ -16,11 +16,11 @@ You can choose to run the script [init.jl](./init.jl) to generate a new Julia pr
 
 ### Simplicial distributions
 
-There are several polytopes involved in our analysis. Many of them, such as $\text{NS}$, $\Lambda_2$, and $\text{MP}$, can be described using the framework of [simplicial distributions](https://quantum-journal.org/papers/q-2023-05-22-1009/). From the simplicial point of view, measurement scenarios are encoded as topological spaces using combinatorial objects known as simplicial sets. The script [twodim](./lib/twodim.jl) is dedicated to tools for working with the two-dimensional simplicial sets that are used here. (A more comprehensive repository can be found at [SimpDist](https://github.com/okaygit/SimpDist).)
+There are several polytopes involved in our analysis. Many of them, such as $\text{NS}$, $\Lambda_2$, and $\text{MP}$, can be described using the framework of [simplicial distributions](https://quantum-journal.org/papers/q-2023-05-22-1009/). From the simplicial point of view, measurement scenarios are encoded as topological spaces using combinatorial objects known as simplicial sets. The script [twodim.jl](./lib/twodim.jl) is dedicated to tools for working with the two-dimensional simplicial sets that are used here. (A more comprehensive repository can be found at [SimpDist](https://github.com/okaygit/SimpDist).)
 
 ### Double description method
 
-For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our Julia implementation of the DD algorithm can be found in [doubledescription](./lib/doubledescription.jl).
+For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our Julia implementation of the DD algorithm can be found in [doubledescription.jl](./lib/doubledescription.jl).
 
 ### Symmetries
 
