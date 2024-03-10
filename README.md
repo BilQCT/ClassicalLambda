@@ -18,9 +18,11 @@ You can choose to run the script [init.jl](./init.jl) to generate a new Julia pr
 
 There are several polytopes involved in our analysis. Many of them, such as $\text{NS}$, $\Lambda_2$, and $\text{MP}$, can be described using the framework of [simplicial distributions](https://quantum-journal.org/papers/q-2023-05-22-1009/). From the simplicial point of view, measurement scenarios are encoded as topological spaces using combinatorial objects known as simplicial sets. The script [twodim.jl](./lib/twodim.jl) is dedicated to tools for working with the two-dimensional simplicial sets that are used here. (A more comprehensive repository can be found at [SimpDist](https://github.com/okaygit/SimpDist).)
 
+For a simplicial scenario $(X,N\mathbb{Z}_d)$ we have that the set of simplicial outcome maps $r:X\to N\mathbb{Z}_d$ are determined by the $2$-skeleton. These outcome maps can be computed in GAP which can then in turn be converted into deterministic vertices. The latter can be used as an input to compute the facets of the corresponding Bell polytope. This is implemented in the script [bell.jl](./lib/bell.jl).
+
 ### Double description method
 
-For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our Julia implementation of the DD algorithm can be found in [doubledescription.jl](./lib/doubledescription.jl).
+For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our notebook [ClassicalLambda.ipynb](./ClassicalLambda.ipynb) gives a walkthrough of how we use the main proposition of the DD method to obtain vertices of a polytope $\overline{\text{MP}}$. Functions needed for this implementation can be found in [doubledescription.jl](./lib/doubledescription.jl).
 
 ### Symmetries
 
