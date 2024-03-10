@@ -17,6 +17,17 @@ for f in [:to_one_based_indexing, :to_zero_based_indexing]
     end
 end
 
+function find_vertex(target,V)
+    #initialize index: with 1-based indexing, 0 is not a vertex:
+    idx = 0;        # can choose any other index not in V:
+    for i in 1:size(V)[1]
+        if target == (V[i,:])
+            idx = i
+        end
+    end
+    return idx
+end
+
 #input: polymake polytope object P
 #output: GAP group
 function combinatorial_automorphism_group(P)
@@ -58,48 +69,44 @@ function facets_action_GAP(P)
     return GAP.Globals.Group(gens_gap...)
 end
 
-#input: polymake polytope P:
+#input: Combinatorial automorphisms G, Polytope P, Representative vertices V:
 #output: array of arrays: each element is index of orbit under action of Aut(P):
-function vertex_orbit(P)
-    # create GAP group:
-    G = vertex_action_GAP(P)
-    # use polymake to generate representative vertices of P:
-    rep = representative_vertices(P);
+function vertex_orbit(G,P,V)
     # find vertex identifiers: representative vertices:
-    rep_idx = [find_vertex(rep[i,:],P.VERTICES) for i in 1:size(rep)[1]];
+    rep_idx = [find_vertex(V[i,:],P.VERTICES) for i in 1:size(V)[1]];
     # create array of arrays: each array is an orbit:
-    orbit_arry = [Vector{Int64}(GAP.Globals.Orbit(G,i)) for i in rep_idx];
+    orbs = [Vector{Int64}(GAP.Globals.Orbit(G,i)) for i in rep_idx];
 
-    return orbit_arry
+    return orbs
 end
 
-#input: polymake polytope P:
+#input: Combinatorial automorphisms G, Polytope P, Representative facts V:
 #output: array of arrays: each element is index of orbit under action of Aut(P):
-function facets_orbit(P)
-    # create GAP group:
-    G = facets_action_GAP(P)
-    # use polymake to generate representative vertices of P:
-    rep = representative_facets(P);
+function facets_orbit(G,P,F)
     # find vertex identifiers: representative vertices:
-    rep_idx = [find_vertex(rep[i,:],P.FACETS) for i in 1:size(rep)[1]];
+    rep_idx = [find_vertex(F[i,:],P.FACETS) for i in 1:size(F)[1]];
     # create array of arrays: each array is an orbit:
-    orbit_arry = [Vector{Int64}(GAP.Globals.Orbit(G,i)) for i in rep_idx];
+    orbs = [Vector{Int64}(GAP.Globals.Orbit(G,i)) for i in rep_idx];
 
-    return orbit_arry
+    return orbs
 end
 
-#INPUT: Polymake polytope object:
+#INPUT: Polymake polytope object, bool: true if Aut(P) already computed
 #OUTPUT: representative vertices
-function representative_vertices(polytope)
-    pm.polytope.combinatorial_symmetries(polytope)
-    pm.give(polytope, "GROUP.REPRESENTATIVE_VERTICES");
-    return polytope.GROUP.REPRESENTATIVE_VERTICES
+function representative_vertices(P,bool)
+    if bool == false
+        pm.polytope.combinatorial_symmetries(P)
+    end
+    pm.give(P, "GROUP.REPRESENTATIVE_VERTICES");
+    return P.GROUP.REPRESENTATIVE_VERTICES
 end
 
-#INPUT: Polymake polytope object:
+#INPUT: Polymake polytope object, bool: true if Aut(P) already computed
 #OUTPUT: representative facets
-function representative_facets(polytope)
-    pm.polytope.combinatorial_symmetries(polytope)
-    pm.give(polytope, "GROUP.REPRESENTATIVE_FACETS");
-    return polytope.GROUP.REPRESENTATIVE_FACETS
+function representative_facets(P,bool)
+    if bool == false
+        pm.polytope.combinatorial_symmetries(P)
+    end
+    pm.give(P, "GROUP.REPRESENTATIVE_FACETS");
+    return P.GROUP.REPRESENTATIVE_FACETS
 end

@@ -95,7 +95,7 @@ end
 
 ######################################
 
-function spaces_to_inequalities_EDGE(X1,X2,T=[])
+function spaces_to_inequalities(X,T=[])
     """
     Convert spaces to inequalities based on edges.
     
@@ -107,6 +107,9 @@ function spaces_to_inequalities_EDGE(X1,X2,T=[])
     Returns:
         - Array{Int}: Matrix of inequalities
     """
+    # Extract Xn:
+    X1 = X[2]; X2 = X[3];
+
     # number of edges:
     N = length(X1); d = 2;
     # edges:
@@ -193,7 +196,7 @@ function two_dimensional_distributions(X,COORDINATES,d = 2,T=[])
     # input to TwoDim is a simplicial set in the convention of SimpSet. 
     X1 = X[2]; X2 = X[3];
 
-    M = spaces_to_inequalities_EDGE(X1,X2,T);
+    M = spaces_to_inequalities(X1,X2,T);
 
     return pm.polytope.Polytope(INEQUALITIES=M);
 end

@@ -154,6 +154,72 @@ end
 ####################################################################################
 
 
+# input: julia (numeric) vector (perhaps could be array, didn't check):
+# output: array of entries with zero probability
+function find_zeros(x)
+    Z = findall(y->y==0, x);
+    return Z;
+end
+
+######################################
+
+# inequality matrix:
+#INPUT: num. of prob. parameters:
+#OUTPUT: matrix of inequalities for polymake:
+function inequality_matrix(N)
+    id = Matrix{Int64}(I,N,N); #identity
+    zero = zeros(Int64,N);         #column of zeros
+    ineq = hcat(zero,id);              #concatenate
+    return ineq
+end
+
+######################################
+
+# function: take vector x and generating matrix A and representation matrix R
+#           and compute possible convex decompositions of x in terms of R
+# input: x: vector ((d,)), Matrix (mxd), Matrix (nxd)
+# input: V: return the set of vertices used in the decomposition. Default set to false.
+# output: pm polytope
+function convex_decomposition(x,A,R,V = false)
+    # convert (possible) pm matrices into julia matrices:
+    A = Matrix{Rational{Int64}}(A); R = transpose(Matrix{Rational{Int64}}(R));
+    B = transpose(A*R); x = Vector{Rational{Int64}}(x);
+    
+    # Find tight inequalities:
+    px = A*x; Zx = find_zeros(px);
+    
+    # find all columns of R with common zeros:
+    V_idx = [];
+    for i in 1:size(R)[2]; y = R[:,i]; Zy = find_zeros(A*y);
+        if (intersect(Set(Zx),Set(Zy))) == Set(Zx);
+            push!(V_idx,i);
+        end;
+    end
+    
+    # Common tight inequalities reduce the number of vertices that may
+    # enter the convex decomposition:
+    if isempty(V_idx) == true; V = R;
+    else; V = (R[:,V_idx]); end;
+    
+    # create feasible polytope: all convex decompositions of x in R[V_idx]:
+    # i.e., x = Ry: y>=0, sum y = 1:
+    
+    # nonnegativity conditions:
+    I = inequality_matrix(size(V)[2]);
+    # combine into single array
+    E = hcat(-x,V)[2:end,:];
+    # create feasible polytope:
+    Q = pm.polytope.Polytope(INEQUALITIES=I, EQUATIONS = E);
+    if V == false; return Q;
+    else; return V,Q; end
+end
+
+
+####################################################################################
+####################################################################################
+####################################################################################
+
+
 # Data-type conversions:
 
 
@@ -178,4 +244,33 @@ function array_to_matrix(A,T)
         M = vcat(M,r);
     end
     return M
+end
+
+
+######################################
+
+
+# recursive loop to construct all dit strings:
+function generate_dit_strings(d,N,n,s)
+    if n < N
+        Zd = [(i-1) for i in 1:d] ; dit_strings = [];
+        for i in 1:length(s)
+            for x in Zd
+                #println(i)
+                push!(dit_strings,push!(copy(s[i]),x));
+            end
+        end
+        s = dit_strings; n = n+1;
+        generate_dit_strings(d,N,n,s)
+    else
+        return s
+    end
+end
+
+######################################
+
+# input: outcomes (d) and number of generators (N) (N=dim(simplex))
+function all_dit_strings(d,N)
+    s = [[i-1] for i in 1:d]; n = 1;
+    return generate_dit_strings(d,N,n,s)
 end
