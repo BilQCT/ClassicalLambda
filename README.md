@@ -1,7 +1,7 @@
 # ClassicalLambda
 
 ## Overview
-The central focus of this repository is the jupyter notebook [ClassicalLambda](ClassicalLambda.ipynb) which demonstrates the double description (DD) method described in arXiv:2312.10734 to obtain vertices of $\Lambda_2$, the 2-qubit $\Lambda$ polytope. In particular, we characterize vertices of $\Lambda_2$ that can be described by a noncontextual hidden variable model. For this we take advantage of the fact that for all $n\in\mathbb{N}$ we have that $\Lambda_n\subset \Lambda_n^{(l)}$, where $\Lambda_n^{(l)} \subset \mathbb{R}^{4^n-1}$ can be identified with the nonsignaling polytope for the $n$-partite Bell scenario with three binary outcome observables per party. Certain vertices of $\Lambda_n^{\ell}$, the so-called deterministic vertices, provide a noncontextual hidden variable model (ncHVM) and the corresponding classical (or Bell) polytope is defined as the convex hull of deterministic vertices. In this repository we study the vertices $A_\alpha \in \Lambda_2$ that admit an ncHVM in the sense that $A_\alpha $ is in the classical polytope of the bipartite $(2,3,2)$ Bell scenario.
+The central focus of this repository is the jupyter notebook [ClassicalLambda](ClassicalLambda.ipynb) which demonstrates the double description (DD) method described in arXiv:2312.10734 to obtain vertices of $\Lambda_2$, the 2-qubit $\Lambda$ polytope. In particular, we characterize vertices of $\Lambda_2$ that can be described by a noncontextual hidden variable model. For this we take advantage of the fact that for all $n\in\mathbb{N}$ we have that $\Lambda_n\subset \Lambda_n^{(l)}$, where $\Lambda_n^{(l)} \subset \mathbb{R}^{4^n-1}$ can be identified with the nonsignaling polytope for the $n$-partite Bell scenario with three binary outcome observables per party. Certain vertices of $\Lambda_n^{\ell}$, the so-called deterministic vertices, provide a noncontextual hidden variable model (ncHVM) and the corresponding classical (or Bell) polytope is defined as the convex hull of deterministic vertices. In this repository we study the vertices $A_\alpha \in \Lambda_2$ that admit an ncHVM in the sense that $A_{\alpha}$ is in the classical polytope of the bipartite $(2,3,2)$ Bell scenario.
 
 ## Usage
 
@@ -10,7 +10,11 @@ The necessary packages are:
 Polymake
 GAP
 Combinatorics
-Nemo v0.22
+Nemo
+AbstractAlgebra
+PrettyTables
+DelimitedFiles
+
 
 You can choose to run the script [init.jl](./init.jl) to generate a new Julia project, which will automatically install the dependencies.
 
@@ -24,11 +28,11 @@ For a simplicial scenario $(X,N\mathbb{Z}_d)$ we have that the set of simplicial
 
 ### Double description method
 
-For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our notebook [ClassicalLambda.ipynb](./ClassicalLambda.ipynb) gives a walkthrough of how we use the main proposition of the DD method to obtain vertices of a polytope $\overline{\text{MP}}$. Functions needed for this implementation can be found in [doubledescription.jl](./lib/doubledescription.jl).
+For highly degenerate polytopes the DD method (see e.g., [Fukuda-Prodon, 1995](https://link.springer.com/chapter/10.1007/3-540-61576-8_77)) is an effective tool for description conversion of a polyhedral cone from its $H$-representation to its $V$-representation, or vice versa. Our notebook [ClassicalLambda.ipynb](./ClassicalLambda.ipynb) gives a walkthrough of how we use the main proposition of the DD method to obtain vertices of a polytope $\overline{\text{MP}}$.
 
 ### Symmetries
 
-We deal with highly symmetric polytopes, thus we can reduce by group action the number of vertices to a small number of representatives of each orbit. Currently we use the Julia interface to [Polymake](https://polymake.org/doku.php/start) via the [Oscar](https://www.oscar-system.org/) project to handle this part, which is in the script [symmetries.jl](./lib/symmetries.jl) However, eventually consideration of symmetries will be implemented directly via [GAP](https://www.gap-system.org/).
+We deal with highly symmetric polytopes, thus we can reduce by group action the number of vertices to a small number of representatives of each orbit. Currently we use the Julia interface to [Polymake](https://polymake.org/doku.php/start) via the [Oscar](https://www.oscar-system.org/) project to handle this part, which is in the script [symmetries.jl](./lib/symmetries.jl).
 
 
 
