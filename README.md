@@ -1,7 +1,7 @@
 # ClassicalLambda
 
 ## Overview
-The central focus of this repository is the jupyter notebook [ClassicalLambda](ClassicalLambda.ipynb) which demonstrates the double description (DD) method described in arXiv:2312.10734 to obtain vertices of $\Lambda_2$, the 2-qubit $\Lambda$ polytope.
+The central focus of this repository is the jupyter notebook [ClassicalLambda](ClassicalLambda.ipynb) which demonstrates the double description (DD) method described in arXiv:2312.10734 to obtain vertices of $\Lambda_2$, the 2-qubit $\Lambda$ polytope. In particular, we characterize vertices of $\Lambda_2$ that can be described by a noncontextual hidden variable model. For this we take advantage of the fact that for all $n\in\mathbb{N}$ we have that $\Lambda_n\subset \Lambda_n^{(l)}$, where $\Lambda_n^{(l)} \subset \mathbb{R}^{4^n-1}$ can be identified with $\text{NS}_n$, the nonsignaling polytope for the $n$-partite Bell scenario with three binary outcome observables per party. Certain vertices of $\Lambda_n^{\ell}$, the so-called deterministic vertices, provide a noncontextual hidden variable model (ncHVM) and the corresponding classical polytope $\text{CL}_n$ is defined as the convex hull of deterministic vertices. In this repository we study the vertices $A_\alpha \in \Lambda_2$ that admit an ncHVM in the sense that $A_\alpha \in \text{CL}_2$, the two-qubit classical polytope for the $(2,3,2)$ Bell scenario.
 
 ## Usage
 
@@ -9,6 +9,8 @@ The necessary packages are:
 
 Polymake
 GAP
+Combinatorics
+Nemo v0.22
 
 You can choose to run the script [init.jl](./init.jl) to generate a new Julia project, which will automatically install the dependencies.
 
@@ -16,7 +18,7 @@ You can choose to run the script [init.jl](./init.jl) to generate a new Julia pr
 
 ### Simplicial distributions
 
-There are several polytopes involved in our analysis. Many of them, such as $\text{NS}$, $\Lambda_2$, and $\text{MP}$, can be described using the framework of [simplicial distributions](https://quantum-journal.org/papers/q-2023-05-22-1009/). From the simplicial point of view, measurement scenarios are encoded as topological spaces using combinatorial objects known as simplicial sets. The script [twodim.jl](./lib/twodim.jl) is dedicated to tools for working with the two-dimensional simplicial sets that are used here. (A more comprehensive repository can be found at [SimpDist](https://github.com/okaygit/SimpDist).)
+There are several polytopes involved in our analysis. Many of them, such as $\text{NS}$, $\Lambda_2$, and $\text{MP}$, can be described using the framework of [simplicial distributions](https://quantum-journal.org/papers/q-2023-05-22-1009/). From the simplicial point of view, measurement scenarios are encoded as topological spaces using combinatorial objects known as simplicial sets. The script [twodim.jl](./lib/twodim.jl) is dedicated to tools for working with the two-dimensional simplicial sets that are used here. (A more comprehensive repository can be found at [TwoDim](https://github.com/BilQCT/TwoDim).)
 
 For a simplicial scenario $(X,N\mathbb{Z}_d)$ we have that the set of simplicial outcome maps $r:X\to N\mathbb{Z}_d$ are determined by the $2$-skeleton. These outcome maps can be computed in GAP which can then in turn be converted into deterministic vertices. The latter can be used as an input to compute the facets of the corresponding Bell polytope. This is implemented in the script [bell.jl](./lib/bell.jl).
 

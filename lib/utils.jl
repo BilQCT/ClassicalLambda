@@ -1,26 +1,27 @@
 # use the Oscar package:
 using Polymake
 const pm=Polymake
+
 using LinearAlgebra
 
-####################################################################################
-####################################################################################
-####################################################################################
+using Nemo
+const nm = Nemo;
 
-# Rank functions:
-
-# input: x (vector), inequalities (array)
-# output: int array of index values
-function tight_inequalities(x,inequalities)
-    x = Vector{Rational{Int64}}(x);
-    A = Matrix{Rational{Int64}}(inequalities);
-    b = A*x;
-    return findall(y->y==0,b)
+function nemo_to_julia(nM)
+    k = size(nM)[1]; d = size(nM)[2];
+    M = Matrix{Rational{Int64}}(undef,0,d);
+    for i in 1:k
+        row = Vector{Rational{Int64}}([]);
+        for j in 1:d
+            r = convert(Rational{Int64},nM[i,j]);
+            row = vcat(row,[r]);
+        end
+        M = vcat(M,transpose(row));
+    end
+    return M
 end
 
 ######################################
-
-using LinearAlgebra
 
 # compute rank of matrix of tight inequalities
 # input: Vector{Int}: array of integer indices corresponding to tight inequalities

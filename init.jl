@@ -10,7 +10,7 @@ end
 # activate project
 Pkg.activate("./env")
 
-dependencies = ["Polymake","GAP","Combinatorics"]
+dependencies = ["Polymake","GAP","Combinatorics","Nemo","PrettyTables","DelimitedFiles","AbstractAlgebra"];
 
 for package in dependencies
     Pkg.add(package)
