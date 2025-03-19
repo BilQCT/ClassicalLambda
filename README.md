@@ -8,8 +8,11 @@ The central focus of this repository is the jupyter notebook [ClassicalLambda](C
 The necessary packages are:
 
 Polymake
+
 GAP
+
 Combinatorics
+
 Nemo v0.22
 
 You can choose to run the script [init.jl](./init.jl) to generate a new Julia project, which will automatically install the dependencies.
