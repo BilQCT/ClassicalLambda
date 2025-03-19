@@ -8,11 +8,17 @@ The central focus of this repository is the jupyter notebook [ClassicalLambda](C
 The necessary packages are:
 
 Polymake
+
 GAP
+
 Combinatorics
+
 Nemo
+
 AbstractAlgebra
+
 PrettyTables
+
 DelimitedFiles
 
 
